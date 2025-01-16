@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "name": "Game A",
+    "image": "https://s25.q4cdn.com/103200307/files/doc_multimedia/2024/7/1008624162/EA_SPORTS_FC_25_-_Cover@square.png",
+    "type": "video games",
+    "variations": ["Digital", "New", "Pre-owned"],
+    "details": "Description of Game A"
+  },
+  {
+    "id": "2",
+    "name": "Shirt B",
+    "image": "https://pngimg.com/d/dress_shirt_PNG8117.png",
+    "type": "clothing",
+    "variations": ["Small", "Medium", "Large"],
+    "details": "Description of Shirt B"
+  },
+  {
+    "id": "3",
+    "name": "Console C",
+    "image": "https://www.citypng.com/public/uploads/preview/ps5-official-console-and-controller-735811696255421bt4xtwpvzb.png",
+    "type": "console",
+    "variations": ["New", "Pre-Owned", "Refurbished"],
+    "details": "Description of Console C"
+  }
+]
