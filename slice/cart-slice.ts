@@ -1,12 +1,14 @@
 import {createSlice} from '@reduxjs/toolkit';
 
+export interface CartItemProps {
+  id: string;
+  name: string;
+  quantity: number;
+  variant: string;
+}
+
 interface CartItems {
-  cartItems: Array<{
-    id: string;
-    name: string;
-    quantity: number;
-    variant: string;
-  }>;
+  cartItems: Array<CartItemProps>;
 }
 
 const name = 'cart';
@@ -25,9 +27,28 @@ const cartSlice = createSlice({
         item => item.id === payload.id && item.variant === payload.variant,
       );
       if (matchedItem) {
+        // Increment the quantity if the cart item already exists
         matchedItem.quantity += 1;
       } else {
         cartItems.push({...payload, quantity: 1});
+      }
+    },
+    removeFromCart: (state, action) => {
+      const {cartItems} = state;
+      const {payload} = action;
+      const matchedItem = cartItems.find(
+        item => item.id === payload.id && item.variant === payload.variant,
+      );
+      if (matchedItem) {
+        if (matchedItem.quantity === 1) {
+          // Remove the product from cart when quantity is 1
+          const cartItemsAfterRemoval = cartItems.filter(
+            item => item.id !== payload.id && item.variant !== payload.variant,
+          );
+          state.cartItems = cartItemsAfterRemoval;
+        } else {
+          matchedItem.quantity -= 1;
+        }
       }
     },
     clearCart: state => {
@@ -37,6 +58,6 @@ const cartSlice = createSlice({
 });
 
 const {actions, reducer} = cartSlice;
-export const {addToCart, clearCart} = actions;
+export const {addToCart, removeFromCart, clearCart} = actions;
 
 export default reducer;

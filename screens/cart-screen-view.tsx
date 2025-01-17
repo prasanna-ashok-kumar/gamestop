@@ -29,7 +29,7 @@ export const CartScreenView = () => {
   };
   return (
     <View>
-      <ProductsList />
+      <ProductsList showQuantityEditor />
       {!isCartEmpty && (
         <>
           <CustomButton onPress={handleClearCart} text={'Clear cart'} />

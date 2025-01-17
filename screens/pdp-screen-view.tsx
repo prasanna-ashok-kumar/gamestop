@@ -41,9 +41,7 @@ export const PDPScreenView = () => {
   );
 
   // Set the chosen variant to add to cart
-  const [variant, setVariant] = useState<string>(
-    productInfo?.variations[0] as string,
-  );
+  const [variant, setVariant] = useState<string>();
   useEffect(() => {
     // Match the product based on id from route
     if (Array.isArray(products)) {
@@ -51,6 +49,7 @@ export const PDPScreenView = () => {
         product => product.id === params.id,
       );
       setProductInfo(productDetails);
+      setVariant(productDetails?.variations[0]);
     }
   }, [products]);
 

@@ -3,8 +3,14 @@ import {useSelector} from 'react-redux';
 import React, {useCallback} from 'react';
 import {CustomText} from './text';
 import {CustomReducerType} from '../slice/store';
+import {QuantityEditorButton} from './quantity-editor-button';
 
-export const ProductsList = () => {
+interface ProductsListProps {
+  showQuantityEditor?: boolean;
+}
+export const ProductsList = ({
+  showQuantityEditor = false,
+}: ProductsListProps) => {
   const cartProducts = useSelector(
     (state: CustomReducerType) => state.cart.cartItems,
   );
@@ -28,7 +34,11 @@ export const ProductsList = () => {
               <View style={rules.cartItemsContainer}>
                 <CustomText text={item.name} style={rules.text} />
                 <CustomText text={item.variant} style={rules.text} />
+                {showQuantityEditor && (
+                  <QuantityEditorButton isDecrement product={item} />
+                )}
                 <CustomText text={item.quantity} style={rules.text} />
+                {showQuantityEditor && <QuantityEditorButton product={item} />}
               </View>
             );
           }}
