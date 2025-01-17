@@ -8,12 +8,12 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import products from '../data/products.json';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {CustomText} from '../components/text';
 import {RootStackParamsList} from '../navigation/root-navigation';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {addToCart} from '../slice/cart-slice';
+import {CustomReducerType} from '../slice/store';
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get('screen');
 
@@ -27,18 +27,33 @@ export interface ProductDetailsProps {
 }
 
 export const PDPScreenView = () => {
+  // Fetch params for id
   const {params} = useRoute<RouteProp<RootStackParamsList, 'pdp-screen'>>();
+
+  // Individual product info
   const [productInfo, setProductInfo] = useState<ProductDetailsProps>();
+
   const {navigate} =
     useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
   const dispatch = useDispatch();
+  const products = useSelector(
+    (state: CustomReducerType) => state.products.productItems,
+  );
+
+  // Set the chosen variant to add to cart
   const [variant, setVariant] = useState<string>(
     productInfo?.variations[0] as string,
   );
   useEffect(() => {
-    const productDetails = products.find(product => product.id === params.id);
-    setProductInfo(productDetails);
-  }, []);
+    // Match the product based on id from route
+    if (Array.isArray(products)) {
+      const productDetails = (products as ProductDetailsProps[]).find(
+        product => product.id === params.id,
+      );
+      setProductInfo(productDetails);
+    }
+  }, [products]);
+
   const isVariationsEmpty =
     Array.isArray(productInfo?.variations) && !productInfo?.variations.length;
 

@@ -2,15 +2,11 @@ import {FlatList, StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import React, {useCallback} from 'react';
 import {CustomText} from './text';
-import {combineReducers} from '@reduxjs/toolkit';
-
-const rootReducer = combineReducers({});
-
-export type CartReducerType = ReturnType<typeof rootReducer>;
+import {CustomReducerType} from '../slice/store';
 
 export const ProductsList = () => {
   const cartProducts = useSelector(
-    (state: CartReducerType) => state.cart.cartItems,
+    (state: CustomReducerType) => state.cart.cartItems,
   );
   const itemSeparatorComponent = useCallback(
     () => <View style={rules.separator} />,
@@ -37,6 +33,7 @@ export const ProductsList = () => {
             );
           }}
           ItemSeparatorComponent={itemSeparatorComponent}
+          contentContainerStyle={{paddingBottom: 20}}
         />
       )}
     </View>

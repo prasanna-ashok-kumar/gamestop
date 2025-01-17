@@ -10,6 +10,8 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamsList} from '../navigation/root-navigation';
 import {CustomTextInput} from '../components/text-input';
 import {CustomButton} from '../components/button';
+import {useDispatch} from 'react-redux';
+import {clearCart} from '../slice/cart-slice';
 
 const formSchema = zod.object({
   name: zod
@@ -46,6 +48,7 @@ type FormData = zod.infer<typeof formSchema>;
 export const CheckoutScreenView = () => {
   const {navigate} =
     useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
+  const dispatch = useDispatch();
   const formHandler = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
@@ -57,6 +60,7 @@ export const CheckoutScreenView = () => {
 
   const handleYesAlert = () => {
     navigate('plp-screen');
+    dispatch(clearCart());
   };
 
   const handleOrder = () => {
