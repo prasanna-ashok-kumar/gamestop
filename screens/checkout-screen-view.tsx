@@ -5,7 +5,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {ProductsList} from '../components/products-list';
 import {Alert, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import {CustomText} from '../components/text';
-import {useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamsList} from '../navigation/root-navigation';
 import {CustomTextInput} from '../components/text-input';
@@ -46,7 +46,7 @@ const formSchema = zod.object({
 type FormData = zod.infer<typeof formSchema>;
 
 export const CheckoutScreenView = () => {
-  const {navigate} =
+  const {dispatch: navigationDispatch} =
     useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
   const dispatch = useDispatch();
   const formHandler = useForm<FormData>({
@@ -59,7 +59,17 @@ export const CheckoutScreenView = () => {
   } = formHandler;
 
   const handleYesAlert = () => {
-    navigate('plp-screen');
+    // Reset the navigation stack
+    navigationDispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'plp-screen',
+          },
+        ],
+      }),
+    );
     dispatch(clearCart());
   };
 
