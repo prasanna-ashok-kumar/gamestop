@@ -43,7 +43,7 @@ const cartSlice = createSlice({
         if (matchedItem.quantity === 1) {
           // Remove the product from cart when quantity is 1
           const cartItemsAfterRemoval = cartItems.filter(
-            item => item.id !== payload.id && item.variant !== payload.variant,
+            item => item.id !== payload.id || item.variant !== payload.variant,
           );
           state.cartItems = cartItemsAfterRemoval;
         } else {
