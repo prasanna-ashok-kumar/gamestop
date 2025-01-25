@@ -1,20 +1,9 @@
-import {
-  Button,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Dimensions,
-} from 'react-native';
+import {Image, Pressable, StyleSheet} from 'react-native';
 import {CustomText} from './text';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamsList} from '../navigation/root-navigation';
 import {useDispatch} from 'react-redux';
 import {addToCart} from '../slice/cart-slice';
 import {CustomButton} from './button';
+import {useAuthenticatedNavigation} from '../utils/use-navigation';
 
 interface ProductTileProps {
   id: string;
@@ -28,8 +17,7 @@ export const ProductTile = ({
 }: {
   productDetails: ProductTileProps;
 }) => {
-  const {navigate} =
-    useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
+  const {navigate} = useAuthenticatedNavigation();
   const {id, name, image: imageUrl, variations} = productDetails;
   const dispatch = useDispatch();
 
@@ -50,6 +38,8 @@ export const ProductTile = ({
     </Pressable>
   );
 };
+
+ProductTile.whyDidYouRender = true;
 
 const rules = StyleSheet.create({
   tileContainer: {

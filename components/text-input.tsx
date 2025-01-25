@@ -1,11 +1,11 @@
 import {StyleSheet, TextInput, TextInputProps, ViewProps} from 'react-native';
 
-interface CustomTextInputProps {
+interface CustomTextInputProps extends TextInputProps {
   value: string;
   onChangeText: (text: string) => void;
   placeholder: string;
   defaultValue: string;
-  placeholderTextColor: string;
+  placeholderTextColor?: string;
   style?: TextInputProps;
   state?: string;
 }

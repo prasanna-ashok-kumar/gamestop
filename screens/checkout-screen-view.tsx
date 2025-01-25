@@ -5,13 +5,12 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {ProductsList} from '../components/products-list';
 import {Alert, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import {CustomText} from '../components/text';
-import {CommonActions, useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamsList} from '../navigation/root-navigation';
+import {CommonActions} from '@react-navigation/native';
 import {CustomTextInput} from '../components/text-input';
 import {CustomButton} from '../components/button';
 import {useDispatch} from 'react-redux';
 import {clearCart} from '../slice/cart-slice';
+import {useAuthenticatedNavigation} from '../utils/use-navigation';
 
 const formSchema = zod.object({
   name: zod
@@ -46,8 +45,7 @@ const formSchema = zod.object({
 type FormData = zod.infer<typeof formSchema>;
 
 export const CheckoutScreenView = () => {
-  const {dispatch: navigationDispatch} =
-    useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
+  const {dispatch: navigationDispatch} = useAuthenticatedNavigation();
   const dispatch = useDispatch();
   const formHandler = useForm<FormData>({
     resolver: zodResolver(formSchema),

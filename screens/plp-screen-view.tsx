@@ -3,6 +3,7 @@ import {ActivityIndicator, FlatList, StyleSheet, View} from 'react-native';
 import {useDebounce} from 'use-debounce';
 import {CustomTextInput} from '../components/text-input';
 import products from '../data/products.json';
+import {isEqual} from 'lodash';
 import {ProductTile} from '../components/product-tile';
 import {CustomText} from '../components/text';
 import {useQuery} from 'react-query';
@@ -11,36 +12,59 @@ import {ProductDetailsProps} from './pdp-screen-view';
 import {useDispatch} from 'react-redux';
 import {setProducts} from '../slice/products-slice';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {CustomButton} from '../components/button';
+import {CommonActions} from '@react-navigation/native';
+import {useUnauthenticatedNavigation} from '../utils/use-navigation';
 
 export const PLPScreenView = (): JSX.Element => {
   // Query the products with a specific delay
-  const {data, isLoading} = useQuery('products', fetchProducts);
+  const {data: products, isLoading} = useQuery('products', fetchProducts);
   // Handle search input using debounce logic
   const [searchProductTerm, setSearchProductTerm] = useState<string>('');
   const [debouncedTerm] = useDebounce(searchProductTerm, 500);
 
   const dispatch = useDispatch();
+  const {navigate, dispatch: navigationDispatch} =
+    useUnauthenticatedNavigation();
 
   const [filteredProducts, setFilteredProducts] = useState<
     ProductDetailsProps[] | undefined
-  >(data as ProductDetailsProps[]);
+  >(products as ProductDetailsProps[]);
 
   useEffect(() => {
-    if (data) {
+    if (products) {
       // Store in redux
-      dispatch(setProducts(data));
+      dispatch(setProducts(products));
       // Find and store the matching products list
-      const filteredProductsList = (data as ProductDetailsProps[]).filter(
+      const filteredProductsList = (products as ProductDetailsProps[]).filter(
         (product: ProductDetailsProps) =>
           product.name.toLowerCase().includes(debouncedTerm.toLowerCase()),
       );
-      setFilteredProducts(filteredProductsList);
+
+      const areProductsEqual = isEqual(filteredProducts, filteredProductsList);
+      if (!areProductsEqual) {
+        setFilteredProducts(filteredProductsList);
+      }
     }
-  }, [debouncedTerm, data]);
+  }, [debouncedTerm, products]);
 
   const handleSearchTextInput = (text: string) => {
     setSearchProductTerm(text);
   };
+
+  const handleLogout = () => {
+    navigationDispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'login-screen',
+          },
+        ],
+      }),
+    );
+  };
+
   return (
     <SafeAreaView edges={['bottom']}>
       <View>
@@ -69,6 +93,9 @@ export const PLPScreenView = (): JSX.Element => {
                   renderItem={({item}) => {
                     return <ProductTile productDetails={item} />;
                   }}
+                  ListFooterComponent={
+                    <CustomButton text="Log out" onPress={handleLogout} />
+                  }
                 />
               )}
             </View>
@@ -78,6 +105,8 @@ export const PLPScreenView = (): JSX.Element => {
     </SafeAreaView>
   );
 };
+
+PLPScreenView.whyDidYouRender = true;
 
 const rules = StyleSheet.create({
   productsListContainer: {

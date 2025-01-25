@@ -8,12 +8,12 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {CustomText} from '../components/text';
-import {RootStackParamsList} from '../navigation/root-navigation';
+import {AuthenticatedRootStackParamsList} from '../navigation/root-navigation';
 import {useDispatch, useSelector} from 'react-redux';
 import {addToCart} from '../slice/cart-slice';
 import {CustomReducerType} from '../slice/store';
+import {useAuthenticatedNavigation} from '../utils/use-navigation';
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get('screen');
 
@@ -28,13 +28,13 @@ export interface ProductDetailsProps {
 
 export const PDPScreenView = () => {
   // Fetch params for id
-  const {params} = useRoute<RouteProp<RootStackParamsList, 'pdp-screen'>>();
+  const {params} =
+    useRoute<RouteProp<AuthenticatedRootStackParamsList, 'pdp-screen'>>();
 
   // Individual product info
   const [productInfo, setProductInfo] = useState<ProductDetailsProps>();
 
-  const {navigate} =
-    useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
+  const {navigate} = useAuthenticatedNavigation();
   const dispatch = useDispatch();
   const products = useSelector(
     (state: CustomReducerType) => state.products.productItems,
@@ -125,6 +125,8 @@ export const PDPScreenView = () => {
     </>
   );
 };
+
+PDPScreenView.whyDidYouRender = true;
 
 const rules = StyleSheet.create({
   pdpContainer: {

@@ -1,13 +1,11 @@
-import {useNavigation} from '@react-navigation/native';
 import {View} from 'react-native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamsList} from '../navigation/root-navigation';
 import {ProductsList} from '../components/products-list';
 import {useDispatch, useSelector} from 'react-redux';
 import {clearCart} from '../slice/cart-slice';
 import React from 'react';
 import {CustomButton} from '../components/button';
 import {CustomReducerType} from '../slice/store';
+import {useAuthenticatedNavigation} from '../utils/use-navigation';
 
 export const CartScreenView = () => {
   const dispatch = useDispatch();
@@ -15,8 +13,7 @@ export const CartScreenView = () => {
     (state: CustomReducerType) => state.cart.cartItems,
   );
   const isCartEmpty = cartProducts.length === 0;
-  const {navigate} =
-    useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
+  const {navigate} = useAuthenticatedNavigation();
 
   const handleClearCart = () => {
     dispatch(clearCart());
