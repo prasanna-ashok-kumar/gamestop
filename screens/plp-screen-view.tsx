@@ -1,49 +1,82 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList, StyleSheet, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {useDebounce} from 'use-debounce';
 import {CustomTextInput} from '../components/text-input';
-import products from '../data/products.json';
 import {isEqual} from 'lodash';
 import {ProductTile} from '../components/product-tile';
 import {CustomText} from '../components/text';
-import {useQuery} from 'react-query';
-import {fetchProducts} from '../data/fetch-products';
-import {ProductDetailsProps} from './pdp-screen-view';
-import {useDispatch} from 'react-redux';
-import {setProducts} from '../slice/products-slice';
+import {useDispatch, useSelector} from 'react-redux';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton} from '../components/button';
 import {CommonActions} from '@react-navigation/native';
 import {useUnauthenticatedNavigation} from '../utils/use-navigation';
+import {CustomReducerType} from '../slice/store';
+import {ProductDetailsProps} from '../types/types';
+import {fetchProducts} from '../data/fetch-products';
+import {fetchFromApi} from '../utils/fetch-from-api';
+import {setProducts, setProductsError} from '../slice/products-slice';
+
+const ITEM_HEIGHT = Dimensions.get('screen').height;
 
 export const PLPScreenView = (): JSX.Element => {
-  // Query the products with a specific delay
-  const {data: products, isLoading} = useQuery('products', fetchProducts);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const dispatch = useDispatch();
+  const products = useSelector(
+    (state: CustomReducerType) => state.products.productItems,
+  );
+
+  const productsError = useSelector(
+    (state: CustomReducerType) => state.products.productItemsError,
+  );
+  const isProductsError = !!productsError;
+
+  const [filteredProductsState, setFilteredProductsState] = useState<
+    ProductDetailsProps[] | undefined
+  >(products);
+
   // Handle search input using debounce logic
   const [searchProductTerm, setSearchProductTerm] = useState<string>('');
   const [debouncedTerm] = useDebounce(searchProductTerm, 500);
 
-  const dispatch = useDispatch();
-  const {navigate, dispatch: navigationDispatch} =
-    useUnauthenticatedNavigation();
-
-  const [filteredProducts, setFilteredProducts] = useState<
-    ProductDetailsProps[] | undefined
-  >(products as ProductDetailsProps[]);
+  const {dispatch: navigationDispatch} = useUnauthenticatedNavigation();
 
   useEffect(() => {
-    if (products) {
-      // Store in redux
-      dispatch(setProducts(products));
-      // Find and store the matching products list
-      const filteredProductsList = (products as ProductDetailsProps[]).filter(
-        (product: ProductDetailsProps) =>
-          product.name.toLowerCase().includes(debouncedTerm.toLowerCase()),
-      );
+    const fetchProducts = async () => {
+      const url = `https://www.freetogame.com/api/games`;
+      const [error, response] = await fetchFromApi(url);
 
-      const areProductsEqual = isEqual(filteredProducts, filteredProductsList);
+      if (Array.isArray(response) && response.length) {
+        response.splice(40);
+        dispatch(setProducts(response));
+      } else {
+        dispatch(setProductsError(error));
+      }
+      setIsLoading(false);
+    };
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    if (products.length) {
+      // Find and store the matching products list
+      const filteredProductsList = products.filter(
+        (product: ProductDetailsProps) =>
+          product.title.toLowerCase().includes(debouncedTerm.toLowerCase()),
+      );
+      // Update state only when the products are different from previous state
+      const areProductsEqual = isEqual(
+        filteredProductsState,
+        filteredProductsList,
+      );
       if (!areProductsEqual) {
-        setFilteredProducts(filteredProductsList);
+        setFilteredProductsState(filteredProductsList);
       }
     }
   }, [debouncedTerm, products]);
@@ -69,7 +102,13 @@ export const PLPScreenView = (): JSX.Element => {
     <SafeAreaView edges={['bottom']}>
       <View>
         {isLoading && <ActivityIndicator size={'large'} color={'#000000'} />}
-        {!isLoading && (
+        {!isLoading && isProductsError && (
+          <CustomText
+            text="Error while fetching products, try restarting the app"
+            style={{color: 'red'}}
+          />
+        )}
+        {!isLoading && !isProductsError && (
           <>
             <CustomTextInput
               value={searchProductTerm}
@@ -78,24 +117,33 @@ export const PLPScreenView = (): JSX.Element => {
               defaultValue=""
               placeholderTextColor="#112222"
             />
-            <View style={rules.productsListContainer}>
-              {!filteredProducts?.length ? (
+            <View>
+              {!filteredProductsState?.length ? (
                 <CustomText
                   text={`No products found while searching for ${debouncedTerm}`}
                 />
               ) : (
                 <FlatList
-                  data={filteredProducts}
-                  keyExtractor={item => item.id}
+                  data={filteredProductsState}
+                  keyExtractor={item => item.id.toString()}
                   numColumns={2}
                   horizontal={false}
-                  contentContainerStyle={{paddingBottom: 300}}
+                  contentContainerStyle={rules.contentContainerStyle}
                   renderItem={({item}) => {
                     return <ProductTile productDetails={item} />;
                   }}
                   ListFooterComponent={
                     <CustomButton text="Log out" onPress={handleLogout} />
                   }
+                  maxToRenderPerBatch={10}
+                  initialNumToRender={5}
+                  getItemLayout={(_data, index) => ({
+                    length: ITEM_HEIGHT * 0.5,
+                    offset: ITEM_HEIGHT * index,
+                    index,
+                  })}
+                  showsVerticalScrollIndicator={false}
+                  columnWrapperStyle={rules.columnWrapperStyle}
                 />
               )}
             </View>
@@ -109,8 +157,6 @@ export const PLPScreenView = (): JSX.Element => {
 PLPScreenView.whyDidYouRender = true;
 
 const rules = StyleSheet.create({
-  productsListContainer: {
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
+  contentContainerStyle: {paddingBottom: 300},
+  columnWrapperStyle: {justifyContent: 'space-between', marginBottom: 10},
 });

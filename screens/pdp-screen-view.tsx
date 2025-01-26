@@ -14,17 +14,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {addToCart} from '../slice/cart-slice';
 import {CustomReducerType} from '../slice/store';
 import {useAuthenticatedNavigation} from '../utils/use-navigation';
+import {ProductDetailsProps} from '../types/types';
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get('screen');
-
-export interface ProductDetailsProps {
-  id: string;
-  name: string;
-  image: string;
-  type: string;
-  variations: string[];
-  details: string;
-}
 
 export const PDPScreenView = () => {
   // Fetch params for id
@@ -40,31 +32,21 @@ export const PDPScreenView = () => {
     (state: CustomReducerType) => state.products.productItems,
   );
 
-  // Set the chosen variant to add to cart
-  const [variant, setVariant] = useState<string>();
   useEffect(() => {
     // Match the product based on id from route
-    if (Array.isArray(products)) {
+    if (Array.isArray(products) && products.length) {
       const productDetails = (products as ProductDetailsProps[]).find(
-        product => product.id === params.id,
+        product => product.id.toString() === params.id,
       );
       setProductInfo(productDetails);
-      setVariant(productDetails?.variations[0]);
     }
   }, [products]);
 
-  const isVariationsEmpty =
-    Array.isArray(productInfo?.variations) && !productInfo?.variations.length;
-
-  const handleVariation = (variation: string) => {
-    setVariant(variation);
-  };
   const handleAddToCart = () => {
     dispatch(
       addToCart({
         id: productInfo?.id,
-        name: productInfo?.name,
-        variant: variant,
+        title: productInfo?.title,
       }),
     );
     navigate('cart-screen');
@@ -75,44 +57,19 @@ export const PDPScreenView = () => {
       {productInfo && (
         <View style={rules.pdpContainer}>
           <Image
-            source={{uri: productInfo?.image}}
+            source={{uri: productInfo?.thumbnail}}
             style={rules.productImage}
           />
           <CustomText
-            text={`Name: ${productInfo.name}`}
+            text={`Name: ${productInfo.title}`}
             style={rules.productDetailsText}
           />
           <CustomText
-            text={`Type: ${productInfo.type}`}
+            text={`Publisher: ${productInfo.publisher}`}
             style={rules.productDetailsText}
           />
-          <CustomText text={'Variations:'} style={rules.productDetailsText} />
-          <View style={rules.variations}>
-            {!isVariationsEmpty &&
-              productInfo.variations.map((variation: string, index: number) => {
-                const isSelected = variant === variation;
-                return (
-                  <TouchableOpacity
-                    onPress={() => handleVariation(variation)}
-                    style={
-                      isSelected
-                        ? StyleSheet.compose(
-                            rules.variationsButton,
-                            rules.variationsButtonSelected,
-                          )
-                        : rules.variationsButton
-                    }
-                    key={index}>
-                    <CustomText
-                      text={variation}
-                      style={isSelected ? rules.variationsButtonText : {}}
-                    />
-                  </TouchableOpacity>
-                );
-              })}
-          </View>
           <CustomText
-            text={`Description: ${productInfo.details}`}
+            text={`Description: ${productInfo.short_description}`}
             style={rules.productDetailsText}
           />
           <TouchableOpacity

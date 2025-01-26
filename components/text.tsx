@@ -1,13 +1,11 @@
-import {StyleSheet, Text, TextStyle} from 'react-native';
+import {StyleProp, StyleSheet, Text, TextProps, TextStyle} from 'react-native';
 
-export const CustomText = ({
-  text,
-  style,
-  ...props
-}: {
-  text: string;
-  style?: TextStyle;
-}) => {
+interface CustomTextProps extends TextProps {
+  text: string | number;
+  style?: StyleProp<TextStyle>;
+}
+
+export const CustomText = ({text, style, ...props}: CustomTextProps) => {
   return (
     <Text style={StyleSheet.compose(rules.content, style)} {...props}>
       {text}
@@ -18,7 +16,6 @@ export const CustomText = ({
 const rules = StyleSheet.create({
   content: {
     color: '#000000',
-    marginHorizontal: 'auto',
     marginVertical: 10,
   },
 });

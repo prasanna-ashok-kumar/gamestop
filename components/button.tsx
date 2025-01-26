@@ -1,4 +1,10 @@
-import {StyleProp, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import {
+  StyleProp,
+  StyleSheet,
+  TextStyle,
+  TouchableOpacity,
+  ViewStyle,
+} from 'react-native';
 import {CustomText} from './text';
 
 interface CustomButtonProps {
@@ -6,6 +12,7 @@ interface CustomButtonProps {
   text: string;
   style?: StyleProp<ViewStyle>;
   enabled?: boolean;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 export const CustomButton = ({
@@ -13,13 +20,17 @@ export const CustomButton = ({
   text,
   style,
   enabled = true,
+  textStyle,
 }: CustomButtonProps) => {
   return (
     <TouchableOpacity
       onPress={onPress}
       style={StyleSheet.compose(rules.button, style)}
       disabled={!enabled}>
-      <CustomText text={text} />
+      <CustomText
+        text={text}
+        style={StyleSheet.compose(rules.buttonText, textStyle)}
+      />
     </TouchableOpacity>
   );
 };
@@ -27,10 +38,14 @@ export const CustomButton = ({
 const rules = StyleSheet.create({
   button: {
     borderWidth: 1,
-    borderColor: '#000000',
+    borderColor: '#2574BB',
+    backgroundColor: '#2574BB',
     marginHorizontal: 'auto',
     marginVertical: 10,
     padding: 5,
     borderRadius: 5,
+  },
+  buttonText: {
+    color: '#ffffff',
   },
 });

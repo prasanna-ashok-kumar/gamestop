@@ -4,37 +4,37 @@ import {useDispatch} from 'react-redux';
 import {addToCart} from '../slice/cart-slice';
 import {CustomButton} from './button';
 import {useAuthenticatedNavigation} from '../utils/use-navigation';
-
-interface ProductTileProps {
-  id: string;
-  name: string;
-  image: string;
-  variations: string[];
-}
+import {ProductDetailsProps} from '../types/types';
 
 export const ProductTile = ({
   productDetails,
 }: {
-  productDetails: ProductTileProps;
+  productDetails: ProductDetailsProps;
 }) => {
   const {navigate} = useAuthenticatedNavigation();
-  const {id, name, image: imageUrl, variations} = productDetails;
+  const {id, title, thumbnail, publisher} = productDetails;
   const dispatch = useDispatch();
 
   const handleNavigationToPdp = () => {
-    navigate('pdp-screen', {id});
+    navigate('pdp-screen', {id: id.toString()});
   };
 
   const handleAddToCart = () => {
-    dispatch(addToCart({id, name, quantity: 1, variant: variations[0]}));
+    dispatch(addToCart({id, title, quantity: 1}));
     navigate('cart-screen');
   };
 
   return (
     <Pressable style={rules.tileContainer} onPress={handleNavigationToPdp}>
-      <Image source={{uri: imageUrl}} style={rules.productImage} />
-      <CustomText text={name} />
-      <CustomButton onPress={handleAddToCart} text="Add to cart" />
+      <Image source={{uri: thumbnail}} style={rules.productImage} />
+      <CustomText text={title} style={rules.titleText} />
+      <CustomText text={publisher} style={{fontSize: 16}} />
+      <CustomButton
+        onPress={handleAddToCart}
+        text="ADD TO CART"
+        style={rules.buttonStyle}
+        textStyle={rules.buttonTextStyle}
+      />
     </Pressable>
   );
 };
@@ -43,15 +43,19 @@ ProductTile.whyDidYouRender = true;
 
 const rules = StyleSheet.create({
   tileContainer: {
-    borderWidth: 1,
-    borderColor: '#00000',
-    margin: 10,
-    height: 310,
-    justifyContent: 'flex-start',
+    width: '48%',
+    backgroundColor: '#f8f8f8',
+    borderRadius: 8,
+    marginBottom: 10,
   },
+  titleText: {marginVertical: 0, fontSize: 20},
+  buttonStyle: {marginVertical: 5, backgroundColor: '#2574BB'},
+  buttonTextStyle: {color: '#ffffff'},
   productImage: {
-    width: 150,
+    width: '100%',
     height: 200,
-    resizeMode: 'contain',
+    borderRadius: 8,
+    flex: 1,
+    resizeMode: 'cover',
   },
 });

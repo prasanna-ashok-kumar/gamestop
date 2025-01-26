@@ -32,8 +32,7 @@ export const ProductsList = ({
           renderItem={({item}) => {
             return (
               <View style={rules.cartItemsContainer}>
-                <CustomText text={item.name} style={rules.text} />
-                <CustomText text={item.variant} style={rules.text} />
+                <CustomText text={item.title} style={rules.text} />
                 {showQuantityEditor && (
                   <QuantityEditorButton isDecrement product={item} />
                 )}
