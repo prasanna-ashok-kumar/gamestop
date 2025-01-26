@@ -6,6 +6,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import {CustomText} from './text';
+import React from 'react';
 
 interface CustomButtonProps {
   onPress: () => void;
@@ -15,25 +16,21 @@ interface CustomButtonProps {
   textStyle?: StyleProp<TextStyle>;
 }
 
-export const CustomButton = ({
-  onPress,
-  text,
-  style,
-  enabled = true,
-  textStyle,
-}: CustomButtonProps) => {
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={StyleSheet.compose(rules.button, style)}
-      disabled={!enabled}>
-      <CustomText
-        text={text}
-        style={StyleSheet.compose(rules.buttonText, textStyle)}
-      />
-    </TouchableOpacity>
-  );
-};
+export const CustomButton = React.memo(
+  ({onPress, text, style, enabled = true, textStyle}: CustomButtonProps) => {
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        style={StyleSheet.compose(rules.button, style)}
+        disabled={!enabled}>
+        <CustomText
+          text={text}
+          style={StyleSheet.compose(rules.buttonText, textStyle)}
+        />
+      </TouchableOpacity>
+    );
+  },
+);
 
 const rules = StyleSheet.create({
   button: {

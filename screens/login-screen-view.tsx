@@ -56,7 +56,7 @@ export const LoginScreenView = () => {
         onChangeText={text => handleLoginInput('password', text)}
         secureTextEntry
       />
-      <CustomButton text="Login" onPress={handleLoginButtonPress} />
+      <CustomButton text="LOGIN" onPress={handleLoginButtonPress} />
     </>
   );
 };

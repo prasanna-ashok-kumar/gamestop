@@ -5,6 +5,7 @@ import {addToCart} from '../slice/cart-slice';
 import {CustomButton} from './button';
 import {useAuthenticatedNavigation} from '../utils/use-navigation';
 import {ProductDetailsProps} from '../types/types';
+import {useCallback} from 'react';
 
 export const ProductTile = ({
   productDetails,
@@ -19,10 +20,10 @@ export const ProductTile = ({
     navigate('pdp-screen', {id: id.toString()});
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = useCallback(() => {
     dispatch(addToCart({id, title, quantity: 1}));
     navigate('cart-screen');
-  };
+  }, []);
 
   return (
     <Pressable style={rules.tileContainer} onPress={handleNavigationToPdp}>

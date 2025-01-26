@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -47,20 +47,25 @@ export const PLPScreenView = (): JSX.Element => {
 
   const {dispatch: navigationDispatch} = useUnauthenticatedNavigation();
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const url = `https://www.freetogame.com/api/games`;
-      const [error, response] = await fetchFromApi(url);
+  const fetchProducts = useCallback(async () => {
+    const url = `https://www.freetogame.com/api/games`;
+    const [error, response] = await fetchFromApi(url);
 
-      if (Array.isArray(response) && response.length) {
-        response.splice(40);
-        dispatch(setProducts(response));
-      } else {
-        dispatch(setProductsError(error));
-      }
+    if (Array.isArray(response) && response.length) {
+      response.splice(10);
+      dispatch(setProducts(response));
+    } else {
+      dispatch(setProductsError(error));
+    }
+    setIsLoading(false);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!products.length) {
+      fetchProducts();
+    } else {
       setIsLoading(false);
-    };
-    fetchProducts();
+    }
   }, []);
 
   useEffect(() => {
@@ -77,6 +82,9 @@ export const PLPScreenView = (): JSX.Element => {
       );
       if (!areProductsEqual) {
         setFilteredProductsState(filteredProductsList);
+        console.log('State updated');
+      } else {
+        console.log("State didn't update");
       }
     }
   }, [debouncedTerm, products]);
@@ -85,7 +93,7 @@ export const PLPScreenView = (): JSX.Element => {
     setSearchProductTerm(text);
   };
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     navigationDispatch(
       CommonActions.reset({
         index: 0,
@@ -96,7 +104,15 @@ export const PLPScreenView = (): JSX.Element => {
         ],
       }),
     );
-  };
+  }, []);
+
+  const renderItem = (item: ProductDetailsProps) => (
+    <ProductTile productDetails={item} />
+  );
+
+  const listFooterComponent = () => (
+    <CustomButton text="Log out" onPress={handleLogout} />
+  );
 
   return (
     <SafeAreaView edges={['bottom']}>
@@ -129,12 +145,8 @@ export const PLPScreenView = (): JSX.Element => {
                   numColumns={2}
                   horizontal={false}
                   contentContainerStyle={rules.contentContainerStyle}
-                  renderItem={({item}) => {
-                    return <ProductTile productDetails={item} />;
-                  }}
-                  ListFooterComponent={
-                    <CustomButton text="Log out" onPress={handleLogout} />
-                  }
+                  renderItem={({item}) => renderItem(item)}
+                  ListFooterComponent={listFooterComponent}
                   maxToRenderPerBatch={10}
                   initialNumToRender={5}
                   getItemLayout={(_data, index) => ({
@@ -154,7 +166,7 @@ export const PLPScreenView = (): JSX.Element => {
   );
 };
 
-PLPScreenView.whyDidYouRender = true;
+// PLPScreenView.whyDidYouRender = true;
 
 const rules = StyleSheet.create({
   contentContainerStyle: {paddingBottom: 300},
