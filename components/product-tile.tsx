@@ -6,6 +6,7 @@ import {CustomButton} from './button';
 import {useAuthenticatedNavigation} from '../utils/use-navigation';
 import {ProductDetailsProps} from '../types/types';
 import {useCallback} from 'react';
+import FastImage from 'react-native-fast-image';
 
 export const ProductTile = ({
   productDetails,
@@ -27,7 +28,10 @@ export const ProductTile = ({
 
   return (
     <Pressable style={rules.tileContainer} onPress={handleNavigationToPdp}>
-      <Image source={{uri: thumbnail}} style={rules.productImage} />
+      <FastImage
+        source={{uri: thumbnail, priority: FastImage.priority.high}}
+        style={rules.productImage}
+      />
       <CustomText text={title} style={rules.titleText} />
       <CustomText text={publisher} style={{fontSize: 16}} />
       <CustomButton
@@ -40,7 +44,7 @@ export const ProductTile = ({
   );
 };
 
-ProductTile.whyDidYouRender = true;
+// ProductTile.whyDidYouRender = true;
 
 const rules = StyleSheet.create({
   tileContainer: {

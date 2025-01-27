@@ -119,11 +119,11 @@ const rules = StyleSheet.create({
     fontSize: 20,
   },
   cartItem: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
     padding: 15,
     marginVertical: 10,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: '#000000',
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -146,7 +146,7 @@ const rules = StyleSheet.create({
     borderRadius: 5,
   },
   quantityText: {
-    color: '#fff',
+    color: '#ffffff',
     fontSize: 18,
   },
   quantity: {
