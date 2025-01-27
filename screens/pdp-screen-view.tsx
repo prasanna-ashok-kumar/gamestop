@@ -83,7 +83,7 @@ export const PDPScreenView = () => {
   );
 };
 
-PDPScreenView.whyDidYouRender = true;
+// PDPScreenView.whyDidYouRender = true;
 
 const rules = StyleSheet.create({
   pdpContainer: {
