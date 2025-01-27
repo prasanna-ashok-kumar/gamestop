@@ -32,7 +32,7 @@ export const ProductTile = ({
         source={{uri: thumbnail, priority: FastImage.priority.high}}
         style={rules.productImage}
       />
-      <CustomText text={title} style={rules.titleText} />
+      <CustomText text={title} style={rules.titleText} numberOfLines={1} />
       <CustomText text={publisher} style={{fontSize: 16}} />
       <CustomButton
         onPress={handleAddToCart}

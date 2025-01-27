@@ -54,8 +54,10 @@ export const PLPScreenView = (): JSX.Element => {
     if (Array.isArray(response) && response.length) {
       response.splice(10);
       dispatch(setProducts(response));
+      dispatch(setProductsError(''));
     } else {
       dispatch(setProductsError(error));
+      dispatch(setProducts([]));
     }
     setIsLoading(false);
   }, [dispatch]);
@@ -137,6 +139,7 @@ export const PLPScreenView = (): JSX.Element => {
               {!filteredProductsState?.length ? (
                 <CustomText
                   text={`No products found while searching for ${debouncedTerm}`}
+                  style={rules.noProductsFoundText}
                 />
               ) : (
                 <FlatList
@@ -169,6 +172,7 @@ export const PLPScreenView = (): JSX.Element => {
 // PLPScreenView.whyDidYouRender = true;
 
 const rules = StyleSheet.create({
+  noProductsFoundText: {fontSize: 20},
   contentContainerStyle: {paddingBottom: 300},
   columnWrapperStyle: {justifyContent: 'space-between', marginBottom: 10},
   errorText: {color: '#FF0000'},
