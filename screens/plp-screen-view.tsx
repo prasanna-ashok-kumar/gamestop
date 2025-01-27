@@ -38,8 +38,8 @@ export const PLPScreenView = (): JSX.Element => {
   const isProductsError = !!productsError;
 
   const [filteredProductsState, setFilteredProductsState] = useState<
-    ProductDetailsProps[] | undefined
-  >(products);
+    ProductDetailsProps[]
+  >([]);
 
   // Handle search input using debounce logic
   const [searchProductTerm, setSearchProductTerm] = useState<string>('');
