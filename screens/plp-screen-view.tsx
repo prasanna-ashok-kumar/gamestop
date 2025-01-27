@@ -121,7 +121,7 @@ export const PLPScreenView = (): JSX.Element => {
         {!isLoading && isProductsError && (
           <CustomText
             text="Error while fetching products, try restarting the app"
-            style={{color: 'red'}}
+            style={rules.errorText}
           />
         )}
         {!isLoading && !isProductsError && (
@@ -171,4 +171,5 @@ export const PLPScreenView = (): JSX.Element => {
 const rules = StyleSheet.create({
   contentContainerStyle: {paddingBottom: 300},
   columnWrapperStyle: {justifyContent: 'space-between', marginBottom: 10},
+  errorText: {color: '#FF0000'},
 });

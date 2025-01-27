@@ -6,7 +6,7 @@ import {CartScreenView} from '../screens/cart-screen-view';
 import {CheckoutScreenView} from '../screens/checkout-screen-view';
 import {LoginScreenView} from '../screens/login-screen-view';
 import {useAppState} from '../utils/use-app-state';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {DummyScreen} from '../screens/dummy-screen';
 
@@ -79,13 +79,14 @@ const UnAuthenticatedNavigation = () => {
 export const RootNavigation = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   useAppState();
+  const fetchToken = useCallback(async () => {
+    const authToken = await AsyncStorage.getItem('authToken');
+    setIsAuthenticated(!!authToken);
+  }, []);
+
   useEffect(() => {
-    const fetchToken = async () => {
-      const authToken = await AsyncStorage.getItem('authToken');
-      setIsAuthenticated(!!authToken);
-    };
     void fetchToken();
-  }, [AsyncStorage]);
+  }, [fetchToken]);
 
   return (
     <NavigationContainer>

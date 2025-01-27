@@ -29,4 +29,4 @@ const rules = StyleSheet.create({
   },
 });
 
-DummyScreen.whyDidYouRender = true;
+// DummyScreen.whyDidYouRender = true;
