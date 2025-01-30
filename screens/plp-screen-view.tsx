@@ -18,23 +18,23 @@ import {CommonActions} from '@react-navigation/native';
 import {useUnauthenticatedNavigation} from '../utils/use-navigation';
 import {CustomReducerType} from '../slice/store';
 import {ProductDetailsProps} from '../types/types';
-import {fetchProducts} from '../data/fetch-products';
-import {fetchFromApi} from '../utils/fetch-from-api';
-import {setProducts, setProductsError} from '../slice/products-slice';
+import {fetchProducts, ProductsDispatch} from '../slice/products-slice';
 
 const ITEM_HEIGHT = Dimensions.get('screen').height;
 
 export const PLPScreenView = (): JSX.Element => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const dispatch = useDispatch<ProductsDispatch>();
 
-  const dispatch = useDispatch();
-  const products = useSelector(
-    (state: CustomReducerType) => state.products.productItems,
+  const productsSliceResponse = useSelector(
+    (state: CustomReducerType) => state.products,
   );
 
-  const productsError = useSelector(
-    (state: CustomReducerType) => state.products.productItemsError,
-  );
+  const {
+    productItems: products,
+    productItemsError: productsError,
+    productsLoading: isLoading,
+  } = productsSliceResponse;
+
   const isProductsError = !!productsError;
 
   const [filteredProductsState, setFilteredProductsState] = useState<
@@ -47,28 +47,11 @@ export const PLPScreenView = (): JSX.Element => {
 
   const {dispatch: navigationDispatch} = useUnauthenticatedNavigation();
 
-  const fetchProducts = useCallback(async () => {
-    const url = `https://www.freetogame.com/api/games`;
-    const [error, response] = await fetchFromApi(url);
-
-    if (Array.isArray(response) && response.length) {
-      response.splice(10);
-      dispatch(setProducts(response));
-      dispatch(setProductsError(''));
-    } else {
-      dispatch(setProductsError(error));
-      dispatch(setProducts([]));
-    }
-    setIsLoading(false);
-  }, [dispatch]);
-
   useEffect(() => {
     if (!products.length) {
-      fetchProducts();
-    } else {
-      setIsLoading(false);
+      dispatch(fetchProducts());
     }
-  }, []);
+  }, [dispatch, products]);
 
   useEffect(() => {
     if (products.length) {
@@ -108,8 +91,9 @@ export const PLPScreenView = (): JSX.Element => {
     );
   }, []);
 
-  const renderItem = (item: ProductDetailsProps) => (
-    <ProductTile productDetails={item} />
+  const renderItem = useCallback(
+    (item: ProductDetailsProps) => <ProductTile productDetails={item} />,
+    [],
   );
 
   const listFooterComponent = () => (
@@ -159,6 +143,7 @@ export const PLPScreenView = (): JSX.Element => {
                   })}
                   showsVerticalScrollIndicator={false}
                   columnWrapperStyle={rules.columnWrapperStyle}
+                  removeClippedSubviews
                 />
               )}
             </View>

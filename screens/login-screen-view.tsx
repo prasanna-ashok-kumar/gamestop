@@ -18,7 +18,7 @@ const defaultLoginDetails = {
 export const LoginScreenView = () => {
   const [loginDetails, setLoginDetails] =
     useState<LoginDetails>(defaultLoginDetails);
-  const {dispatch} = useUnauthenticatedNavigation();
+  const {dispatch, navigate} = useUnauthenticatedNavigation();
 
   const handleLoginInput = (key: string, value: string) => {
     setLoginDetails({
@@ -39,6 +39,24 @@ export const LoginScreenView = () => {
         ],
       }),
     );
+    // navigate('authenticated-screen', {screen: 'cart-screen'});
+    // dispatch(
+    //   CommonActions.reset({
+    //     index: 0,
+    //     routes: [
+    //       {
+    //         name: 'authenticated-screen',
+    //         state: {
+    //           routes: [
+    //             {
+    //               name: 'cart-screen',
+    //             },
+    //           ],
+    //         },
+    //       },
+    //     ],
+    //   }),
+    // );
   };
 
   return (
