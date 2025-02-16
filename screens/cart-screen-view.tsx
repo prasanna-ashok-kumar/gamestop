@@ -67,15 +67,21 @@ export const CartScreenView = () => {
   const listFooterComponent = useCallback(
     () => (
       <>
-        <CustomButton onPress={handleClearCart} text={'CLEAR CART'} />
         <CustomButton
-          onPress={handleNavigationToCheckout}
-          text={'PROCEED TO CHECKOUT'}
+          onPress={handleClearCart}
+          text={'CLEAR CART'}
+          style={{backgroundColor: '#e74c3c'}}
         />
-        <CustomButton
-          onPress={handleNavigationToPlp}
-          text={'CONTINUE SHOPPING'}
-        />
+        <View style={rules.flexDirection}>
+          <CustomButton
+            onPress={handleNavigationToCheckout}
+            text={'PROCEED TO CHECKOUT'}
+          />
+          <CustomButton
+            onPress={handleNavigationToPlp}
+            text={'CONTINUE SHOPPING'}
+          />
+        </View>
       </>
     ),
     [],
@@ -96,7 +102,7 @@ export const CartScreenView = () => {
       {isCartEmpty && (
         <>
           <CustomText
-            text={'No products in cart, click on Continue shopping'}
+            text={'No products in cart, click on Continue shopping...'}
             style={rules.cartEmptyText}
           />
           <CustomButton
@@ -117,11 +123,12 @@ const rules = StyleSheet.create({
   },
   cartEmptyText: {
     fontSize: 20,
+    marginHorizontal: 'auto',
   },
   cartItem: {
     backgroundColor: '#ffffff',
     padding: 15,
-    marginVertical: 10,
+    marginVertical: 5,
     borderRadius: 10,
     shadowColor: '#000000',
     shadowOffset: {width: 0, height: 1},
@@ -142,7 +149,8 @@ const rules = StyleSheet.create({
   },
   quantityButton: {
     backgroundColor: '#2574BB',
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: 5,
   },
   quantityText: {
@@ -153,5 +161,9 @@ const rules = StyleSheet.create({
     fontSize: 18,
     width: 40,
     textAlign: 'center',
+  },
+  flexDirection: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
   },
 });

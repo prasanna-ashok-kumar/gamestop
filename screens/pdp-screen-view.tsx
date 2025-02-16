@@ -1,13 +1,6 @@
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {RouteProp, useRoute} from '@react-navigation/native';
 import React from 'react';
-import {useEffect, useState} from 'react';
-import {
-  Image,
-  StyleSheet,
-  View,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {CustomText} from '../components/text';
 import {AuthenticatedRootStackParamsList} from '../navigation/root-navigation';
 import {useDispatch, useSelector} from 'react-redux';
@@ -15,32 +8,34 @@ import {addToCart} from '../slice/cart-slice';
 import {CustomReducerType} from '../slice/store';
 import {useAuthenticatedNavigation} from '../utils/use-navigation';
 import {ProductDetailsProps} from '../types/types';
-
-const {width: WIDTH, height: HEIGHT} = Dimensions.get('screen');
+import FastImage from 'react-native-fast-image';
+import {CustomButton} from '../components/button';
 
 export const PDPScreenView = () => {
   // Fetch params for id
-  const {params} =
-    useRoute<RouteProp<AuthenticatedRootStackParamsList, 'pdp-screen'>>();
-
-  // Individual product info
-  const [productInfo, setProductInfo] = useState<ProductDetailsProps>();
+  const {
+    params: {id: productId},
+  } = useRoute<RouteProp<AuthenticatedRootStackParamsList, 'pdp-screen'>>();
 
   const {navigate} = useAuthenticatedNavigation();
   const dispatch = useDispatch();
-  const products = useSelector(
-    (state: CustomReducerType) => state.products.productItems,
+
+  const productInfo = useSelector((state: CustomReducerType) =>
+    state.products.productItems.find(
+      (product: ProductDetailsProps) => product.id.toString() === productId,
+    ),
   );
 
-  useEffect(() => {
-    // Match the product based on id from route
-    if (Array.isArray(products) && products.length) {
-      const productDetails = (products as ProductDetailsProps[]).find(
-        product => product.id.toString() === params.id,
-      );
-      setProductInfo(productDetails);
-    }
-  }, [products]);
+  const {
+    thumbnail,
+    title,
+    publisher,
+    short_description,
+    genre,
+    platform,
+    developer,
+    release_date,
+  } = productInfo;
 
   const handleAddToCart = () => {
     dispatch(
@@ -51,32 +46,46 @@ export const PDPScreenView = () => {
     );
     navigate('cart-screen');
   };
-
   return (
     <>
       {productInfo && (
         <View style={rules.pdpContainer}>
-          <Image
-            source={{uri: productInfo?.thumbnail}}
+          <FastImage
+            source={{
+              uri: thumbnail,
+              priority: FastImage.priority.high,
+            }}
             style={rules.productImage}
           />
           <CustomText
-            text={`Name: ${productInfo.title}`}
+            text={`NAME: ${title}`}
             style={rules.productDetailsText}
           />
           <CustomText
-            text={`Publisher: ${productInfo.publisher}`}
+            text={`PUBLISHER: ${publisher}`}
             style={rules.productDetailsText}
           />
           <CustomText
-            text={`Description: ${productInfo.short_description}`}
+            text={`GENRE: ${genre}`}
             style={rules.productDetailsText}
           />
-          <TouchableOpacity
-            style={rules.variationsButton}
-            onPress={handleAddToCart}>
-            <CustomText text={'Add to cart'} />
-          </TouchableOpacity>
+          <CustomText
+            text={`PLATFORM: ${platform}`}
+            style={rules.productDetailsText}
+          />
+          <CustomText
+            text={`DEVELOPER: ${developer}`}
+            style={rules.productDetailsText}
+          />
+          <CustomText
+            text={`RELEASE DATE: ${release_date}`}
+            style={rules.productDetailsText}
+          />
+          <CustomText
+            text={`DESCRIPTION: ${short_description}`}
+            style={rules.productDetailsText}
+          />
+          <CustomButton text="ADD TO CART" onPress={handleAddToCart} />
         </View>
       )}
     </>
@@ -88,15 +97,19 @@ export const PDPScreenView = () => {
 const rules = StyleSheet.create({
   pdpContainer: {
     flex: 1,
+    paddingHorizontal: 16,
+    backgroundColor: '#fff',
   },
   productImage: {
-    height: HEIGHT * 0.5,
-    width: WIDTH,
+    width: '100%',
+    height: 300,
     resizeMode: 'contain',
+    marginVertical: 16,
   },
   productDetailsText: {
     marginHorizontal: 10,
     fontWeight: 'bold',
+    fontSize: 16,
   },
   variations: {
     flexDirection: 'row',

@@ -96,10 +96,6 @@ export const PLPScreenView = (): JSX.Element => {
     [],
   );
 
-  const listFooterComponent = () => (
-    <CustomButton text="Log out" onPress={handleLogout} />
-  );
-
   return (
     <SafeAreaView edges={['bottom']}>
       <View>
@@ -118,6 +114,7 @@ export const PLPScreenView = (): JSX.Element => {
               placeholder="Search for a product..."
               defaultValue=""
               placeholderTextColor="#112222"
+              autoFocus
             />
             <View>
               {!filteredProductsState?.length ? (
@@ -133,7 +130,6 @@ export const PLPScreenView = (): JSX.Element => {
                   horizontal={false}
                   contentContainerStyle={rules.contentContainerStyle}
                   renderItem={({item}) => renderItem(item)}
-                  ListFooterComponent={listFooterComponent}
                   maxToRenderPerBatch={10}
                   initialNumToRender={5}
                   getItemLayout={(_data, index) => ({
